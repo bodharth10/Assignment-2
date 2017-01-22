@@ -14,12 +14,12 @@
 ActiveRecord::Schema.define(version: 20160309153948) do
 
   create_table "brands", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "name",       limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
-  add_index "brands", ["name"], name: "index_brands_on_name", unique: true
+  add_index "brands", ["name"], name: "index_brands_on_name", unique: true, using: :btree
 
   create_table "carts", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -27,73 +27,79 @@ ActiveRecord::Schema.define(version: 20160309153948) do
   end
 
   create_table "categories", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "categories", ["name"], name: "index_categories_on_name", unique: true
-
-  create_table "line_items", force: :cascade do |t|
-    t.integer  "product_id"
-    t.integer  "cart_id"
-    t.integer  "quantity",   default: 1
-    t.decimal  "price"
+    t.string   "name",       limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
-    t.integer  "order_id"
   end
 
-  add_index "line_items", ["cart_id"], name: "index_line_items_on_cart_id"
-  add_index "line_items", ["order_id"], name: "index_line_items_on_order_id"
-  add_index "line_items", ["product_id"], name: "index_line_items_on_product_id"
+  add_index "categories", ["name"], name: "index_categories_on_name", unique: true, using: :btree
+
+  create_table "line_items", force: :cascade do |t|
+    t.integer  "product_id", limit: 4
+    t.integer  "cart_id",    limit: 4
+    t.integer  "quantity",   limit: 4,                default: 1
+    t.decimal  "price",                precision: 10
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
+    t.integer  "order_id",   limit: 4
+  end
+
+  add_index "line_items", ["cart_id"], name: "index_line_items_on_cart_id", using: :btree
+  add_index "line_items", ["order_id"], name: "index_line_items_on_order_id", using: :btree
+  add_index "line_items", ["product_id"], name: "index_line_items_on_product_id", using: :btree
 
   create_table "orders", force: :cascade do |t|
-    t.integer  "user_id"
-    t.string   "shipping_name"
-    t.text     "shipping_address"
-    t.string   "payment_type"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.integer  "user_id",          limit: 4
+    t.string   "shipping_name",    limit: 255
+    t.text     "shipping_address", limit: 65535
+    t.string   "payment_type",     limit: 255
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
   end
 
-  add_index "orders", ["user_id"], name: "index_orders_on_user_id"
+  add_index "orders", ["user_id"], name: "index_orders_on_user_id", using: :btree
 
   create_table "products", force: :cascade do |t|
-    t.string   "name"
-    t.decimal  "current_price"
-    t.integer  "quantity"
-    t.text     "description"
-    t.integer  "category_id"
-    t.integer  "brand_id"
-    t.string   "avatar_file_name"
-    t.string   "avatar_content_type"
-    t.integer  "avatar_file_size"
+    t.string   "name",                limit: 255
+    t.decimal  "current_price",                     precision: 10
+    t.integer  "quantity",            limit: 4
+    t.text     "description",         limit: 65535
+    t.integer  "category_id",         limit: 4
+    t.integer  "brand_id",            limit: 4
+    t.string   "avatar_file_name",    limit: 255
+    t.string   "avatar_content_type", limit: 255
+    t.integer  "avatar_file_size",    limit: 4
     t.datetime "avatar_updated_at"
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
+    t.datetime "created_at",                                       null: false
+    t.datetime "updated_at",                                       null: false
   end
 
-  add_index "products", ["brand_id"], name: "index_products_on_brand_id"
-  add_index "products", ["category_id"], name: "index_products_on_category_id"
+  add_index "products", ["brand_id"], name: "index_products_on_brand_id", using: :btree
+  add_index "products", ["category_id"], name: "index_products_on_category_id", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  default: "",    null: false
-    t.string   "encrypted_password",     default: "",    null: false
-    t.string   "reset_password_token"
+    t.string   "email",                  limit: 255, default: "",    null: false
+    t.string   "encrypted_password",     limit: 255, default: "",    null: false
+    t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,     null: false
+    t.integer  "sign_in_count",          limit: 4,   default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
-    t.boolean  "admin",                  default: false
+    t.string   "current_sign_in_ip",     limit: 255
+    t.string   "last_sign_in_ip",        limit: 255
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
+    t.boolean  "admin",                              default: false
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  add_foreign_key "line_items", "carts"
+  add_foreign_key "line_items", "orders"
+  add_foreign_key "line_items", "products"
+  add_foreign_key "orders", "users"
+  add_foreign_key "products", "brands"
+  add_foreign_key "products", "categories"
 end
